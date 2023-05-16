@@ -1,0 +1,24 @@
+{
+  "name": "tictactoe",
+  "version": "1.0.0",
+  "description": "Lab1",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/gjordis/ISGB17_lab1.git"
+  },
+  "author": "gjordis",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/gjordis/ISGB17_lab1/issues"
+  },
+  "homepage": "https://github.com/gjordis/ISGB17_lab1#readme",
+  "dependencies": {
+    "cookie-parser": "^1.4.6",
+    "express": "^4.18.2",
+    "jsdom": "^21.1.1"
+  }
+}
