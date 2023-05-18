@@ -206,7 +206,7 @@ io.on('connection', (socket) => {
 
     // ++ vid connect
     clientCount++;
-    console.log('Antal anslutna connect: ' + clientCount);
+    //console.log('Antal anslutna connect: ' + clientCount);
     //console.log('Antal anslutna connect io: ' + io.engine.clientsCount);
 
     // Lyssnar efter disconnect
@@ -243,22 +243,26 @@ io.on('connection', (socket) => {
 
     /* kontrollerar om kakor finns, samt om det är fler än 2 spelare */
     if (cookies.nickName && cookies.color) {
-
-
+        
         if (clientCount > 2) {
             console.log('Mer än 2 klienter anslutna, kopplar från klient: ' + socket.id);
             console.log('Redan två spelare anslutna!');
+            
+            //socket.emit('message', 'Redan två spelare anslutna!');
+
             socket.disconnect();
-            return; // Avslutar händelsen här, så att ingen ytterligare kod körs för denna klient
+
+            /* OBS !!!vet inte hur jag skall skicka strängen!!! OBS */
+            /* OBS !!!vet inte hur jag skall skicka strängen!!! OBS */
+            
         }
 
 
         //console.log('kakor finns');
-
+        
         /* spelare 1 */
         // om playerOneSocketId är null(ingen spelare tilldelad)
-        else if (globalObject.playerOneSocketId === null) {
-
+        else if (clientCount === 1) {
             console.log(socket.id);
             //tilldelar kakornas värde till playerOneNick
             globalObject.playerOneNick = cookies.nickName;
@@ -274,9 +278,9 @@ io.on('connection', (socket) => {
 
 
             console.log('p1 nick: ' + globalObject.playerOneNick);
-
+            
             /* annrs kolla om playerTwoSocketId är null */
-        } else if (globalObject.playerTwoSocketId === null) {
+        } else if (clientCount === 2) {
             console.log(socket.id);
             //tilldelar kakornas värde till playerTwoNick
             globalObject.playerTwoNick = cookies.nickName;
@@ -287,7 +291,7 @@ io.on('connection', (socket) => {
 
 
             console.log('p2 nick: ' + globalObject.playerTwoNick);
-
+            
             /* nollställ spelplanen */
             globalObject.resetGameArea();
 
@@ -301,17 +305,19 @@ io.on('connection', (socket) => {
 
             let playerTwoData = {
                 opponentNick: globalObject.playerOneNick,
-                opponentColor: globalObject.playerOneColor,
+                opponentColor: globalObject.playerOneColor, 
                 myColor: globalObject.playerTwoColor
             };
+
+            console.log('emit newgame');
             /* skicka händelsen newGame till båda, med tillhörande data */
             io.to(globalObject.playerOneSocketId).emit('newGame', playerOneData);
             io.to(globalObject.playerTwoSocketId).emit('newGame', playerTwoData);
 
             /* låter spelare 1 börja */
-            globalObject.currentPlayer = 1;
+            globalObject.currentPlayer = 1; 
 
-
+            
             io.to(globalObject.playerOneSocketId).emit('yourMove', globalObject.cellId);
 
             //startar timer
@@ -321,6 +327,7 @@ io.on('connection', (socket) => {
            + 'color: ' + globalObject.playerTwoColor + ', '
            + 'id: ' + globalObject.playerTwoSocketId );*/
         }
+        
 
     // kommer vi hit hade vi inga kakor
     } else {
