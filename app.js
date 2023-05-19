@@ -92,8 +92,8 @@ app.get('/reset', function (request, response) {
     globalObject.playerTwoNick = null, // Attribut för att spara nickname på spelare 2
     globalObject.playerTwoColor = null; // Attribut för att spara färg till spelare 1
 
-    globalObject.playerOneSocketId = null; // Attribut för att spara socket.id för spelare 1
-    globalObject.playerTwoSocketId = null; // Attribut för att spara socket.id för spelare 2
+    globalObject.playerOneSocketId = null; // Attribut för att spara socket.id för spelare 1 (Lades till vid LAB2)
+    globalObject.playerTwoSocketId = null; // Attribut för att spara socket.id för spelare 2 (Lades till vid LAB2)
 
     // omdirigerar till '/'
     response.redirect('/');
@@ -248,20 +248,14 @@ io.on('connection', (socket) => {
             console.log('Mer än 2 klienter anslutna, kopplar från klient: ' + socket.id);
             console.log('Redan två spelare anslutna!');
             
-            //socket.emit('message', 'Redan två spelare anslutna!');
-
-            socket.disconnect();
-
-            /* OBS !!!vet inte hur jag skall skicka strängen!!! OBS */
-            /* OBS !!!vet inte hur jag skall skicka strängen!!! OBS */
-            
+            socket.disconnect('Redan två spelare anslutna!');
         }
 
 
         //console.log('kakor finns');
         
         /* spelare 1 */
-        // om playerOneSocketId är null(ingen spelare tilldelad)
+        // om clientCount är 1 (spelare 1)
         else if (clientCount === 1) {
             console.log(socket.id);
             //tilldelar kakornas värde till playerOneNick
@@ -279,7 +273,8 @@ io.on('connection', (socket) => {
 
             console.log('p1 nick: ' + globalObject.playerOneNick);
             
-            /* annrs kolla om playerTwoSocketId är null */
+            /* spelare 2 */
+            // om clientCount är 2 (spelare 2)
         } else if (clientCount === 2) {
             console.log(socket.id);
             //tilldelar kakornas värde till playerTwoNick
@@ -331,20 +326,8 @@ io.on('connection', (socket) => {
 
     // kommer vi hit hade vi inga kakor
     } else {
-
         console.log('Kakorna saknas!');
-        socket.disconnect();
-        return; // Avslutar händelsen här, så att ingen ytterligare kod körs för denna klient
-
-        /* ??? använda gameover för att få över en sträng? 
-                krocker med att ta bort lyssnaren       ??? */
-
-        /* let tredje = socket.id;
-        console.log('Inga kakor');
-        io.to(tredje).emit('gameover', 'Inga kakor');
-        //socket.disconnect(true); */
-
-
+        socket.disconnect('Kakorna saknas!');
     };
 
 
@@ -448,3 +431,5 @@ function timeout() {
     // Kör timeout funktionen efter 5 sekunder 
     globalObject.timerId = setTimeout(timeout, 5000);
 };
+
+/* För att reseta rätt spelare, kolla namnet i kakan för att återställa värdena för rätt spelare */
