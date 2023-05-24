@@ -92,6 +92,8 @@ app.get('/reset', function (request, response) {
     globalObject.playerTwoNick = null, // Attribut för att spara nickname på spelare 2
     globalObject.playerTwoColor = null; // Attribut för att spara färg till spelare 1
 
+    globalObject.currentPlayer = null; // Attribut för att hålla reda på vems drag det är, sätts till antingen 1 eller 2
+
     globalObject.playerOneSocketId = null; // Attribut för att spara socket.id för spelare 1 (Lades till vid LAB2)
     globalObject.playerTwoSocketId = null; // Attribut för att spara socket.id för spelare 2 (Lades till vid LAB2)
 
@@ -146,16 +148,6 @@ app.post('/', function (request, response) {
             throw 'Färg redan tagen!';
         }
 
-        /* !! denna är förmodligen fel!! */
-        // om spelarnas namn är likadana
-        /*else if(globalObject.playerTwoNick === globalObject.playerOneNick) {
-            throw 'Nickname redan taget!';
-        }
-        // om spelarna färg är likadana
-        else if(globalObject.playerTwoColor === globalObject.playerOneColor) {
-            throw 'Färg redan tagen!';
-        }*/
-
 
         // !!!här går allt bra och vi skall skapa kakor!!!
         // skapar två kakor med namn och tillhörande variabel, sätter livslängd till 2 timmar, och endast tillgänglig för servern
@@ -195,8 +187,6 @@ app.post('/', function (request, response) {
 
 
 
-
-
 /* lyssnar på io(sockets) */
 
 // variabel för att räkna antalet anslutna
@@ -206,8 +196,13 @@ io.on('connection', (socket) => {
 
     // ++ vid connect
     clientCount++;
-    //console.log('Antal anslutna connect: ' + clientCount);
+    console.log('Antal anslutna connect: ' + clientCount);
     //console.log('Antal anslutna connect io: ' + io.engine.clientsCount);
+
+    //console.log('användare anslutit');
+    //console.log(socket.client.server.clientsCount);
+    //console.log(io.engine.clientsCount);
+    //console.log(socket);
 
     // Lyssnar efter disconnect
     socket.on('disconnect', () => {
@@ -220,17 +215,11 @@ io.on('connection', (socket) => {
         setTimeout(() => {
             console.log('Antal anslutna disconnect io: ' + io.engine.clientsCount);
         }, 1000);
-
-        /* OBS !!!vet inte hur jag skall skicka strängen!!! OBS */
-        /* OBS !!!vet inte hur jag skall skicka strängen!!! OBS */
-
     });
 
-    //console.log('användare anslutit');
-    //console.log(socket.client.server.clientsCount);
-    //console.log(io.engine.clientsCount);
-    //console.log(socket);
+    
 
+    /* variabel för att nå kakorna */
     let cookies = globalObject.parseCookies(socket.handshake.headers.cookie);
     //let clientCount = io.engine.clientsCount; !!!KAN MAN LITA PÅ DENNA??!!!
 
@@ -409,6 +398,7 @@ io.on('connection', (socket) => {
 
 function timeout() {
     console.log('kallar på timer');
+    
 
     if (globalObject.currentPlayer === 1) {
         // aktuell spelare är P1 
@@ -431,5 +421,3 @@ function timeout() {
     // Kör timeout funktionen efter 5 sekunder 
     globalObject.timerId = setTimeout(timeout, 5000);
 };
-
-/* För att reseta rätt spelare, kolla namnet i kakan för att återställa värdena för rätt spelare */
